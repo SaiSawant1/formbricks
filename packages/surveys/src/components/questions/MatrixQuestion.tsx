@@ -5,6 +5,7 @@ import { QuestionMedia } from "@/components/general/QuestionMedia";
 import { Subheader } from "@/components/general/Subheader";
 import { ScrollableContainer } from "@/components/wrappers/ScrollableContainer";
 import { getUpdatedTtc, useTtc } from "@/lib/ttc";
+import { matrixRowShuffle } from "@/lib/utils";
 import { JSX } from "preact";
 import { useCallback, useMemo, useState } from "preact/hooks";
 import { getLocalizedValue } from "@formbricks/lib/i18n/utils";
@@ -92,6 +93,29 @@ export const MatrixQuestion = ({
       )),
     [question.columns, languageCode]
   );
+  const shuffledRowLabels = useMemo(() => {
+    console.log(question);
+    if (question.shuffleOption) {
+      return matrixRowShuffle(question.rows, question.shuffleOption);
+    }
+    return [];
+  }, [question.rows, question.shuffleOption]);
+
+  const questionRows = useMemo(() => {
+    console.log(2);
+    if (!question.rows || question.rows === undefined) {
+      return [];
+    }
+    if (question.shuffleOption === "none" || question.shuffleOption === undefined || !shuffledRowLabels) {
+      return question.rows;
+    }
+    return shuffledRowLabels.map((label) => {
+      const randomRow = question.rows.find((rowRecord) => {
+        return getLocalizedValue(rowRecord, "default") === label;
+      });
+      return randomRow;
+    });
+  }, [question.rows, question.shuffleOption, shuffledRowLabels]);
 
   return (
     <form key={question.id} onSubmit={handleSubmit} className="fb-w-full">
@@ -116,7 +140,7 @@ export const MatrixQuestion = ({
                 </tr>
               </thead>
               <tbody>
-                {question.rows.map((row, rowIndex) => (
+                {questionRows.map((row, rowIndex) => (
                   // Table rows
                   <tr className={`${rowIndex % 2 === 0 ? "bg-input-bg" : ""}`}>
                     <td

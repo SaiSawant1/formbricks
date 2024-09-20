@@ -506,6 +506,7 @@ export const ZSurveyMatrixQuestion = ZSurveyQuestionBase.extend({
   rows: z.array(ZI18nString),
   columns: z.array(ZI18nString),
   logic: z.array(ZSurveyMatrixLogic).optional(),
+  shuffleOption: ZShuffleOption.optional(),
 });
 
 export type TSurveyMatrixQuestion = z.infer<typeof ZSurveyMatrixQuestion>;

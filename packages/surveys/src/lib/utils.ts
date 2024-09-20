@@ -1,4 +1,5 @@
-import { TSurvey, TSurveyQuestionChoice } from "@formbricks/types/surveys/types";
+import { getLocalizedValue } from "@formbricks/lib/i18n/utils";
+import { TI18nString, TSurvey, TSurveyQuestionChoice } from "@formbricks/types/surveys/types";
 
 export const cn = (...classes: string[]) => {
   return classes.filter(Boolean).join(" ");
@@ -9,6 +10,27 @@ const shuffle = (array: any[]) => {
     const j = Math.floor(Math.random() * (i + 1));
     [array[i], array[j]] = [array[j], array[i]];
   }
+};
+
+export const matrixRowShuffle = (rows: TI18nString[], shuffleOption: string): string[] => {
+  if (rows === undefined) {
+    return [];
+  }
+  const rowLabel = rows.map((row) => getLocalizedValue(row, "default"));
+  if (shuffleOption === undefined) {
+    return rowLabel;
+  }
+  if (shuffleOption === "all") {
+    shuffle(rowLabel);
+  } else if (shuffleOption === "exceptLast") {
+    const lastElement = rowLabel.pop();
+    shuffle(rowLabel);
+    if (lastElement) {
+      rowLabel.push(lastElement);
+    }
+  }
+
+  return rowLabel;
 };
 
 export const getShuffledChoicesIds = (choices: TSurveyQuestionChoice[], shuffleOption: string): string[] => {

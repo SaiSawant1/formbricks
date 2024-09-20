@@ -3,10 +3,11 @@
 import { PlusIcon, TrashIcon } from "lucide-react";
 import { createI18nString, extractLanguageCodes } from "@formbricks/lib/i18n/utils";
 import { TAttributeClass } from "@formbricks/types/attribute-classes";
-import { TI18nString, TSurvey, TSurveyMatrixQuestion } from "@formbricks/types/surveys/types";
+import { TI18nString, TShuffleOption, TSurvey, TSurveyMatrixQuestion } from "@formbricks/types/surveys/types";
 import { Button } from "@formbricks/ui/Button";
 import { Label } from "@formbricks/ui/Label";
 import { QuestionFormInput } from "@formbricks/ui/QuestionFormInput";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@formbricks/ui/Select";
 import { isLabelValidForAllLanguages } from "../lib/validation";
 
 interface MatrixQuestionFormProps {
@@ -77,6 +78,26 @@ export const MatrixQuestionForm = ({
       handleAddLabel(type);
     }
   };
+
+  const shuffleOptionsTypes = {
+    none: {
+      id: "none",
+      label: "Keep current order",
+      show: true,
+    },
+    all: {
+      id: "all",
+      label: "Randomize all",
+      show: question.rows.filter((c) => c.id === "other").length === 0,
+    },
+    exceptLast: {
+      id: "exceptLast",
+      label: "Randomize all except last option",
+      show: true,
+    },
+  };
+
+  console.log(question);
 
   return (
     <form>
@@ -210,6 +231,31 @@ export const MatrixQuestionForm = ({
               }}>
               <span>Add column</span>
             </Button>
+            <div className="mt-3 flex flex-1 items-center justify-end gap-2">
+              <Select
+                defaultValue={question.shuffleOption}
+                value={question.shuffleOption}
+                onValueChange={(e: TShuffleOption) => {
+                  updateQuestion(questionIdx, { shuffleOption: e });
+                }}>
+                <SelectTrigger className="w-fit space-x-2 overflow-hidden border-0 font-medium text-slate-600">
+                  <SelectValue placeholder="Select ordering" />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.values(shuffleOptionsTypes).map(
+                    (shuffleOptionsType) =>
+                      shuffleOptionsType.show && (
+                        <SelectItem
+                          key={shuffleOptionsType.id}
+                          value={shuffleOptionsType.id}
+                          title={shuffleOptionsType.label}>
+                          {shuffleOptionsType.label}
+                        </SelectItem>
+                      )
+                  )}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </div>
       </div>
