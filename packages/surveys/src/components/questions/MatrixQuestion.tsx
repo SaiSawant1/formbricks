@@ -94,15 +94,14 @@ export const MatrixQuestion = ({
     [question.columns, languageCode]
   );
   const shuffledRowLabels = useMemo(() => {
-    console.log(question);
     if (question.shuffleOption) {
       return matrixRowShuffle(question.rows, question.shuffleOption);
     }
     return [];
-  }, [question.rows, question.shuffleOption]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [question.rows.length, question.shuffleOption]);
 
   const questionRows = useMemo(() => {
-    console.log(2);
     if (!question.rows || question.rows === undefined) {
       return [];
     }

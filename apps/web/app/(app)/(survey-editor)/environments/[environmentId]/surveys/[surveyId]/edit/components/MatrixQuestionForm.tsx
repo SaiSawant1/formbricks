@@ -97,8 +97,6 @@ export const MatrixQuestionForm = ({
     },
   };
 
-  console.log(question);
-
   return (
     <form>
       <QuestionFormInput
